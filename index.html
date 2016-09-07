@@ -17,17 +17,89 @@
 
 </head>
 <body>
+<form class="form-inline">
+    <div class="form-group">
+        <label for="movieTerm">Search for a movie</label>
+        <input type="text" class="form-control" id="movieTerm" placeholder="Space Jam">
+    </div>
+
+    <button type="submit" class="btn btn-default">Search</button>
+</form>
+
+<div id="movies" class="container">
+
+    <!--<div class="row">-->
+        <!--<div class="col-sm-6">-->
+            <!--<div class="thumbnail">-->
+                <!--<img src="..." alt="...">-->
+                <!--<div class="caption">-->
+                    <!--<h3>Thumbnail label</h3>-->
+                    <!--<p>...</p>-->
+                    <!--<p><a href="#" class="btn btn-primary" role="button">Button</a> <a href="#" class="btn btn-default" role="button">Button</a></p>-->
+                <!--</div>-->
+            <!--</div>-->
+        <!--</div>-->
+    <!--</div>-->
+
+</div>
 
 <script src='http://code.jquery.com/jquery-2.1.3.min.js'></script>
 <script type="text/javascript">
-    var title = 'space+jam';
-    var queryURL = "http://www.omdbapi.com/?t=" + title + "&y=&plot=short&r=json";
 
-    $.ajax({url: queryURL, method: 'GET'}).done(function(data) {
-        console.log(response);
 
-        console.log(response.Runtime)
+
+    $( "form" ).submit(function( event ) {
+
+
+        var title = $( "#movieTerm" ).val();
+        var queryURL = "http://www.omdbapi.com/?s=" + title + "&y=&plot=short&r=json";
+
+
+
+        $.ajax({url: queryURL, method: 'GET'}).done(function(data) {
+            console.log(data);
+            $.each( data.Search, function( key, value ) {
+//                console.log( key + ": " + value.Title );
+
+                var moviesList = $('#movies');
+//            data.Poster
+
+                //create movie thumbnail
+                var movieThumbnail = $(document.createElement('div'));
+                movieThumbnail.attr('class', 'thumbnail col-sm-4');
+
+                //create moviePoster
+                var moviePoster = $(document.createElement('img'));
+                moviePoster.attr('alt', value.Title);
+                moviePoster.attr('src', value.Poster);
+
+                //create movieCaption
+                var movieCaption = $(document.createElement('div'));
+                movieCaption.attr('class', 'caption');
+                var h3 = $(document.createElement('h3'));
+                h3.text(value.Title);
+                h3.appendTo(movieCaption);
+
+                var pCap = $(document.createElement('a'));
+                pCap.attr('href', 'http://www.imdb.com/title/' + value.imdbID + '/');
+                pCap.addClass('btn btn-default');
+                pCap.text('Learn More');
+                pCap.appendTo(movieCaption);
+
+                //add playerAvatar to the player container
+                moviePoster.appendTo(movieThumbnail);
+                movieCaption.appendTo(movieThumbnail);
+                movieThumbnail.appendTo(moviesList);
+
+            });
+
+
+        });
+
+
+        event.preventDefault();
     });
+
 
 </script>
 </body>
